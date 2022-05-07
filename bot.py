@@ -1,6 +1,6 @@
 from discord.ext import commands
 from dotenv import load_dotenv
-import random,discord,os
+import random,discord,os,wikipedia
 
 
 load_dotenv()
@@ -35,6 +35,34 @@ async def text(ctx):
     file.close()             
     random_text = random.choice(text)                           #Choose random text
     await ctx.send(random_text)                                 #Send random text
+
+
+@bot.command(name='whatis', help='Send wikipedia article about topic you wrote')        #Command name and help for it 
+async def whatis(ctx, arg, arg2=None):
+    try :                                                                               #Try if article exist      
+        if not arg2 :                                                                   #If user wrote 1 word
+            article = wikipedia.summary(arg)                                            
+            await ctx.send(article)                                                     #Send wikipedia article
+        else:                                                                           #If user wrote 2 words
+            article = wikipedia.summary(arg + " "+ arg2)
+            await ctx.send(article)                                                     
+    except:                                                                             #If article doesn't exist or if exist more articles than 1 
+        if not arg2 :                                                                   #If user write 1 word
+            article = wikipedia.search(arg)        
+            if len(article) > 0 :                                                       #If something found
+                result = str(article)[1:-1]                                             #Convert to string
+                result = result.replace("'", "")                                        #Add , between results
+                await ctx.send(f"{arg} can be : {result}")                              #Send results
+            else :                                                                      #If didn't found
+                await ctx.send("The article isn't existing or you wrote it wrong") 
+        else : 
+            article = wikipedia.search(arg + " "+ arg2)                                 #If user wrote 2 words
+            if len(article) > 0 :
+                result = str(article)[1:-1] 
+                result = result.replace("'", "")  
+                await ctx.send(f"{arg} can be : {result}")
+            else :
+                await ctx.send("The article isn't existing or you wrote it wrong") 
 
 @bot.listen('on_message')
 async def chat(msg):
