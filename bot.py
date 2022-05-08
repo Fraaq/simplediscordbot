@@ -45,7 +45,7 @@ async def whatis(ctx,*args):
         await ctx.send(article)                                                     #Send wikipedia article                                                
    
     except:                                                                         #If article doesn't exist or if exist more articles than 1
-        data = " " .join(args)                                                      #Words separeted by space                                                                   
+        data = " " .join(args)                                                      #Words separeted by space                                                                  
         article = wikipedia.search(data)                                            #Search for articles
         
         if len(article) > 0 :                                                       #If something found
@@ -60,11 +60,13 @@ async def qr(ctx,*args):
     script_dir = os.path.abspath(os.path.dirname(__file__))        #Get script directory
     data = " " .join(args)                                         #Words separeted by space
     img = qrcode.make(data)                                        #Make qr code
-    img.save(script_dir + "\\qr_codes\\qr.png")                    #Save qr code in qr_codes directory
-    filepath = script_dir + "\\qr_codes\\" + "qr.png"              #Get qr code file path
+    
+    filepath = script_dir + "\\qr.png"
+    img.save(filepath)                                             #Save qr code 
+    
     
     await ctx.send(file=discord.File(filepath))                    #Send qr code
-    os.remove(script_dir + "\\qr_codes\\qr.png")                   #Delete the qr code to save space on device
+    os.remove(script_dir + "\\qr.png")                             #Delete the qr code to save space on device
 
 
 @bot.listen('on_message')
