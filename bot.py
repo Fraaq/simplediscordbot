@@ -1,6 +1,7 @@
 from discord.ext import commands
 from dotenv import load_dotenv
-import random,discord,os,wikipedia,qrcode
+from bs4 import BeautifulSoup
+import random,discord,os,wikipedia,qrcode,requests
 
 
 load_dotenv()
@@ -37,16 +38,16 @@ async def text(ctx):
     await ctx.send(random_text)                                 #Send random text
 
 
-@bot.command(name='whatis', help='Send wikipedia article about topic you wrote')        #Command name and help for it 
+@bot.command(name='whatis', help='Send wikipedia article about topic you wrote')    #Command name and help for it 
 async def whatis(ctx,*args):
     try :
         data = " " .join(args)                                                      #Try if article exist                                                                        
-        article = wikipedia.summary(data)                                           #Words separeted by space 
+        article = wikipedia.summary(data, sentences = 2)                            #Words separeted by space 
         await ctx.send(article)                                                     #Send wikipedia article                                                
    
     except:                                                                         #If article doesn't exist or if exist more articles than 1
         data = " " .join(args)                                                      #Words separeted by space                                                                  
-        article = wikipedia.search(data)                                            #Search for articles
+        article = wikipedia.search(data, sentences = 2)                             #Search for articles
         
         if len(article) > 0 :                                                       #If something found
             result = str(article)[1:-1]                                             #Convert to string
@@ -55,7 +56,7 @@ async def whatis(ctx,*args):
         else :                                                                      #If didn't found
             await ctx.send("The article isn't existing or you wrote it wrong") 
 
-@bot.command(name='qrcode', help='Make your own qrcode')        
+@bot.command(name='qrcode', help='Make your own qrcode')           #Command name and help for it 
 async def qr(ctx,*args):
     script_dir = os.path.abspath(os.path.dirname(__file__))        #Get script directory
     data = " " .join(args)                                         #Words separeted by space
@@ -68,6 +69,19 @@ async def qr(ctx,*args):
     await ctx.send(file=discord.File(filepath))                    #Send qr code
     os.remove(script_dir + "\\qr.png")                             #Delete the qr code to save space on device
 
+@bot.command(name='news', help="Send top 3 news")                  #Command name and help for it 
+async def qr(ctx):
+    url = 'https://www.bbc.com/news'                               #URL for news
+    response = requests.get(url)                                   
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    links = []
+
+    for a in soup.select("[class~=gs-c-promo-heading]",href=True):
+        links.append("https://www.bbc.com"+ a['href'])              #Add links to news article
+
+    await ctx.send(f"{links[1]}\n{links[2]}\n{links[13]}\n")        #Send 3 news 
 
 @bot.listen('on_message')
 async def chat(msg):
