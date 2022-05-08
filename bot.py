@@ -40,12 +40,12 @@ async def text(ctx):
 @bot.command(name='whatis', help='Send wikipedia article about topic you wrote')        #Command name and help for it 
 async def whatis(ctx,*args):
     try :
-        data = " " .join(args)                                                      #Try if article exist                                                                         #If user wrote 1 word
+        data = " " .join(args)                                                      #Try if article exist                                                                        
         article = wikipedia.summary(data)                                           #Words separeted by space 
         await ctx.send(article)                                                     #Send wikipedia article                                                
    
     except:                                                                         #If article doesn't exist or if exist more articles than 1
-        data = " " .join(args)                                                      #Words separeted by space                                                                    #If user write 1 word
+        data = " " .join(args)                                                      #Words separeted by space                                                                   
         article = wikipedia.search(data)                                            #Search for articles
         
         if len(article) > 0 :                                                       #If something found
