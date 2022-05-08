@@ -1,6 +1,6 @@
 from discord.ext import commands
 from dotenv import load_dotenv
-import random,discord,os,wikipedia
+import random,discord,os,wikipedia,qrcode
 
 
 load_dotenv()
@@ -38,31 +38,34 @@ async def text(ctx):
 
 
 @bot.command(name='whatis', help='Send wikipedia article about topic you wrote')        #Command name and help for it 
-async def whatis(ctx, arg, arg2=None):
-    try :                                                                               #Try if article exist      
-        if not arg2 :                                                                   #If user wrote 1 word
-            article = wikipedia.summary(arg)                                            
-            await ctx.send(article)                                                     #Send wikipedia article
-        else:                                                                           #If user wrote 2 words
-            article = wikipedia.summary(arg + " "+ arg2)
-            await ctx.send(article)                                                     
-    except:                                                                             #If article doesn't exist or if exist more articles than 1 
-        if not arg2 :                                                                   #If user write 1 word
-            article = wikipedia.search(arg)        
-            if len(article) > 0 :                                                       #If something found
-                result = str(article)[1:-1]                                             #Convert to string
-                result = result.replace("'", "")                                        #Add , between results
-                await ctx.send(f"{arg} can be : {result}")                              #Send results
-            else :                                                                      #If didn't found
-                await ctx.send("The article isn't existing or you wrote it wrong") 
-        else : 
-            article = wikipedia.search(arg + " "+ arg2)                                 #If user wrote 2 words
-            if len(article) > 0 :
-                result = str(article)[1:-1] 
-                result = result.replace("'", "")  
-                await ctx.send(f"{arg} can be : {result}")
-            else :
-                await ctx.send("The article isn't existing or you wrote it wrong") 
+async def whatis(ctx,*args):
+    try :
+        data = " " .join(args)                                                      #Try if article exist                                                                         #If user wrote 1 word
+        article = wikipedia.summary(data)                                           #Words separeted by space 
+        await ctx.send(article)                                                     #Send wikipedia article                                                
+   
+    except:                                                                         #If article doesn't exist or if exist more articles than 1
+        data = " " .join(args)                                                      #Words separeted by space                                                                    #If user write 1 word
+        article = wikipedia.search(data)                                            #Search for articles
+        
+        if len(article) > 0 :                                                       #If something found
+            result = str(article)[1:-1]                                             #Convert to string
+            result = result.replace("'", "")                                        #Add , between results
+            await ctx.send(f"{data} can be : {result}")                             #Send results
+        else :                                                                      #If didn't found
+            await ctx.send("The article isn't existing or you wrote it wrong") 
+
+@bot.command(name='qrcode', help='Make your own qrcode')        
+async def qr(ctx,*args):
+    script_dir = os.path.abspath(os.path.dirname(__file__))        #Get script directory
+    data = " " .join(args)                                         #Words separeted by space
+    img = qrcode.make(data)                                        #Make qr code
+    img.save(script_dir + "\\qr_codes\\qr.png")                    #Save qr code in qr_codes directory
+    filepath = script_dir + "\\qr_codes\\" + "qr.png"              #Get qr code file path
+    
+    await ctx.send(file=discord.File(filepath))                    #Send qr code
+    os.remove(script_dir + "\\qr_codes\\qr.png")                   #Delete the qr code to save space on device
+
 
 @bot.listen('on_message')
 async def chat(msg):
