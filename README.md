@@ -7,7 +7,8 @@ Simple python discord bot. This bot can send random text from txt file or random
 3. Banned words from txt file <br>
 4. Send wikipedia article based on user input <br>
 5. Create qr code based on user input<br>
-6. Send 3 news
+6. Send 3 news<br>
+7. Rock Paper and Scissors game
  
 <h1>How to use it </h1>
 1. Install pip <br>
@@ -19,5 +20,6 @@ Simple python discord bot. This bot can send random text from txt file or random
 <b>!text</b> (random text from text.txt file) <br>
 <b>!image</b> (random image from images folder) <br>
 <b>!whatis</b> (Send wikipedia article based on user input) <br>
-<b>!qrcode</b> (Send qrcode based on user input) <br>
+<b>!qrcode "what do you want in qrcode"</b> (Send qrcode based on user input) <br>
 <b>!news</b> (Send 3 news) <br>
+<b>!rpas "you can choice rock,paper,scissors"</b> (Rock Paper and Scissors game) <br>
