@@ -83,6 +83,40 @@ async def qr(ctx):
 
     await ctx.send(f"{links[1]}\n{links[2]}\n{links[13]}\n")        #Send 3 news 
 
+@bot.command(name='rpas', help="Rock Paper and Scissors game")      #Command name and help for it 
+async def game(ctx,arg):
+   
+    choices = ["rock", "paper", "scissors"]
+
+    bot_choice = random.choice(choices)                             
+
+    player_choice = arg                                               
+
+    if player_choice in choices :                                   #If player writes correctly choice
+        if bot_choice == player_choice :
+            await ctx.send(f"Tie, you both selected {bot_choice}")
+
+        elif bot_choice == "rock" and player_choice == "paper":
+            await ctx.send(f"You win, bot selected {bot_choice}\nCongratulations :tada:")
+
+        elif bot_choice == "rock" and player_choice == "scissors":
+            await ctx.send(f"Bot win, bot selected {bot_choice}")
+
+        elif bot_choice == "paper" and player_choice == "rock":
+            await ctx.send(f"Bot win, bot selected {bot_choice}")
+
+        elif bot_choice == "paper" and player_choice == "scissors":
+            await ctx.send(f"You win, bot selected {bot_choice}\nCongratulations :tada:")
+
+        elif bot_choice == "scissors" and player_choice == "rock":
+            await ctx.send(f"You win, bot selected {bot_choice}\nCongratulations :tada:")
+
+        elif bot_choice == "scissors" and player_choice == "paper":
+            await ctx.send(f"Bot win, bot selected {bot_choice}")
+    
+    elif player_choice not in choices:                                 #If player writes something else 
+        await ctx.send(f"Write please !rpas (rock,paper,scissors)")
+
 @bot.listen('on_message')
 async def chat(msg):
 
