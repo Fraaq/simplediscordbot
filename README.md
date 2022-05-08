@@ -6,7 +6,8 @@ Simple python discord bot. This bot can send random text from txt file or random
 2. Random images from folder <br>
 3. Banned words from txt file <br>
 4. Send wikipedia article based on user input <br>
-5. Create qr code based on user input
+5. Create qr code based on user input<br>
+6. Send 3 news
  
 <h1>How to use it </h1>
 1. Install pip <br>
@@ -19,3 +20,4 @@ Simple python discord bot. This bot can send random text from txt file or random
 <b>!image</b> (random image from images folder) <br>
 <b>!whatis</b> (Send wikipedia article based on user input) <br>
 <b>!qrcode</b> (Send qrcode based on user input) <br>
+<b>!news</b> (Send 3 news) <br>
