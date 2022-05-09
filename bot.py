@@ -7,7 +7,11 @@ import random,discord,os,wikipedia,qrcode,requests
 load_dotenv()
 TOKEN = os.getenv('TOKEN')  #Load discord token from env file
 
-bot = commands.Bot(command_prefix='!') 
+help_command = commands.DefaultHelpCommand(                     # Change the no category to commands
+    no_category = 'Commands'
+)
+
+bot = commands.Bot(command_prefix='!', help_command=help_command) 
 client = discord.Client()
 
 @bot.command(name='image', help='Send random image to chat')    #Command name and help for it 
@@ -56,7 +60,7 @@ async def whatis(ctx,*args):
         else :                                                                      #If didn't found
             await ctx.send("The article isn't existing or you wrote it wrong") 
 
-@bot.command(name='qrcode', help='Make your own qrcode')           #Command name and help for it 
+@bot.command(name='qrcode', help="Make your own qrcode | !qrcode 'what you want in qrcode' ")    #Command name and help for it 
 async def qr(ctx,*args):
     script_dir = os.path.abspath(os.path.dirname(__file__))        #Get script directory
     data = " " .join(args)                                         #Words separeted by space
@@ -83,7 +87,7 @@ async def qr(ctx):
 
     await ctx.send(f"{links[1]}\n{links[2]}\n{links[13]}\n")        #Send 3 news 
 
-@bot.command(name='rpas', help="Rock Paper and Scissors game")      #Command name and help for it 
+@bot.command(name='rpas', help="Rock Paper and Scissors game | !rpas 'your choice'")      #Command name and help for it 
 async def game(ctx,arg):
    
     choices = ["rock", "paper", "scissors"]
@@ -116,6 +120,19 @@ async def game(ctx,arg):
     
     elif player_choice not in choices:                                 #If player writes something else 
         await ctx.send(f"Write please !rpas (rock,paper,scissors)")
+
+@bot.command(name='random', help="Send random number | !random from 'number' to 'number' ")    #Command name and help for it
+async def rnd(ctx,*arg):
+    try :                                                                   
+        if arg[0] == "from" and arg[2] == "to" :                            #IF user wrote it in correct format
+            num1 = int(arg[1])                                              #User number1 to int
+            num2 = int(arg[3])                                              #User number2 to int
+            random_num = random.randrange(num1,num2 + 1)                    #Random number (number2 + 1 is for the maximum number entered by the user to be sent as well)
+            await ctx.send(random_num)
+        else:
+            await ctx.send("Write please : !random from 'your number' to 'your number'")
+    except:                                                                             
+        await ctx.send("Write please : !random from 'your number' to 'your number'")
 
 @bot.listen('on_message')
 async def chat(msg):
