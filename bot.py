@@ -134,9 +134,41 @@ async def rnd(ctx,*arg):
     except:                                                                             
         await ctx.send("Write please : !random from 'your number' to 'your number'")
 
+@bot.command(name='gtn', help = 'Guess the number game')        #Command name and help for it
+async def guess_the_number(ctx):
+    await ctx.send("Guess the number between 1 - 100")
+    random_number = random.randrange(1,101)                     #Random number between 1 - 100
+    win = False                                                 
+    attempts = 1                                        
+
+    while win == False :                                        
+        try :                                                                                           
+            msg = await bot.wait_for('message',timeout = 15,check=lambda m: m.author == ctx.author)      #Get input of user time to write is 15s
+            user_guess = int(msg.content)                                                                #User input to int
+            if user_guess == random_number :                                                             #If user guessed the number
+                await ctx.send(f"Congratulations you guessed the number on {attempts} try :tada:")
+                win = True
+                break
+            elif user_guess > random_number :                                                            #If user number is lower than the number
+                await ctx.send("The number is lower")
+                attempts = attempts + 1
+                continue
+
+            elif user_guess < random_number :                                                            #If user number is higher than the number
+                await ctx.send("The number is higher")
+                attempts = attempts + 1
+                continue
+            
+        except ValueError :                                     #If user input something else than number
+            await ctx.send("Write please number")
+            continue
+
+        except :                                                #If time is up
+            await ctx.send("Time is up !")
+            break
+
 @bot.listen('on_message')
 async def chat(msg):
-
     script_dir = os.path.abspath(os.path.dirname(__file__))     #Get script directory
     text_file_path = script_dir + "\\ban words\\" + "words.txt" #Get file path
     file = open(text_file_path, 'r') 
