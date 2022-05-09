@@ -9,7 +9,8 @@ Simple python discord bot. This bot can send random text from txt file or random
 5. Create qr code based on user input<br>
 6. Send 3 news<br>
 7. Rock Paper and Scissors game<br>
-8. Random number in range, based on user input
+8. Random number in range, based on user input<br>
+9. Guess the number game
  
 <h1>How to use it </h1>
 1. Install pip <br>
@@ -25,3 +26,4 @@ Simple python discord bot. This bot can send random text from txt file or random
 <b>!news</b> (Send 3 news) <br>
 <b>!rpas "you can choice rock,paper,scissors"</b> (Rock Paper and Scissors game) <br>
 <b>!random from "your number" to "your number"</b> (Random number) <br>
+<b>!gtn</b> (Guess the number game) <br
