@@ -1,6 +1,7 @@
 from discord.ext import commands
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
+from forex_python.converter import CurrencyRates 
 import random,discord,os,wikipedia,qrcode,requests
 
 
@@ -166,6 +167,34 @@ async def guess_the_number(ctx):
         except :                                                #If time is up
             await ctx.send("Time is up !")
             break
+
+
+@bot.command(name='convert', help='Convert currency to another currency')
+async def conventor(ctx):
+    await ctx.send("Enter the amount to convert :")
+    
+    c = CurrencyRates()
+   
+    try :
+        amount = await bot.wait_for('message',timeout = 30,check=lambda m: m.author == ctx.author)      #Get input of user time to write is 30s
+        await ctx.send("Enter the currency from which you want to convert :")
+        from_currency = await bot.wait_for('message',timeout = 30,check=lambda m: m.author == ctx.author)      #Get input of user time to write is 30s
+    
+        await ctx.send("Enter the currency that you want converted :")
+        to_currency = await bot.wait_for('message',timeout = 30,check=lambda m: m.author == ctx.author)      #Get input of user time to write is 30s
+
+
+        convert = c.convert(from_currency.content.upper(), to_currency.content.upper(), float(amount.content))     #Convert user input
+    
+        result = round(convert,2)                                                                                 #Specified number of decimals
+
+        await ctx.send(f"{result} {to_currency.content.upper()}")                                                  
+        
+    except ValueError :
+        await ctx.send("You entered something wrong")
+        
+    except :
+        pass
 
 @bot.listen('on_message')
 async def chat(msg):
