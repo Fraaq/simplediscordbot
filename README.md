@@ -27,5 +27,5 @@ Simple python discord bot. This bot can send random text from txt file or random
 <b>!news</b> (Send 3 news) <br>
 <b>!rpas "you can choice rock,paper,scissors"</b> (Rock Paper and Scissors game) <br>
 <b>!random from "your number" to "your number"</b> (Random number) <br>
-<b>!gtn</b> (Guess the number game) <br
+<b>!gtn</b> (Guess the number game) <br>
 <b>!convert</b> (Convert currency to another currency)<br>
