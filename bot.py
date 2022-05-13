@@ -52,7 +52,7 @@ async def whatis(ctx,*args):
    
     except:                                                                         #If article doesn't exist or if exist more articles than 1
         data = " " .join(args)                                                      #Words separeted by space                                                                  
-        article = wikipedia.search(data, sentences = 2)                             #Search for articles
+        article = wikipedia.search(data, results = 5)                               #Search for articles
         
         if len(article) > 0 :                                                       #If something found
             result = str(article)[1:-1]                                             #Convert to string
