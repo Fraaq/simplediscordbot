@@ -1,5 +1,5 @@
 # simplediscordbot
-Simple python discord bot. This bot can send random text from txt file or random image from directory and it can delete message if the message contains word that you banned. It can also send and article from wikipedia based on user input. Users can create their own qrcode.
+Simple python discord bot. This bot can send random text from txt file or random image from directory and it can delete message if the message contains word that you banned. It can also send and article from wikipedia based on user input. Users can create their own qrcode. And simple chat system (bot can response if someone write his name).
 
 <h1>Featues</h1>
 1. Random text from file <br>
@@ -11,13 +11,15 @@ Simple python discord bot. This bot can send random text from txt file or random
 7. Rock Paper and Scissors game<br>
 8. Random number in range, based on user input<br>
 9. Guess the number game<br>
-10. Convert currency to another currency
+10. Convert currency to another currency<br>
+11. Simple chat system 
  
 <h1>How to use it </h1>
 1.<a href="https://www.geeksforgeeks.org/how-to-install-pip-on-windows/"> Install pip</a><br>
 2.<a href="https://www.geeksforgeeks.org/how-to-install-a-python-module/"> Install modules</a> (pip install discord,python-dotenv,wikipedia,qrcode,forex-python)<br>
 3. Create .env file in main directory and add " TOKEN='YOURSUPERSECRETTOKEN' " replace the YOURSUPERSECRETTOKEN with your <a href="https://www.writebots.com/discord-bot-token/" >bot token</a> <br>
-4. Customize your <a href="https://github.com/Anonym-Guy/simplediscordbot/blob/main/text/text.txt">own words</a>, <a href="https://github.com/Anonym-Guy/simplediscordbot/tree/main/images">images</a> and <a href="https://github.com/Anonym-Guy/simplediscordbot/tree/main/ban%20words">banned words</a>
+4. Customize your <a href="https://github.com/Anonym-Guy/simplediscordbot/blob/main/text/text.txt">own words</a>, <a href="https://github.com/Anonym-Guy/simplediscordbot/tree/main/images">images</a> and <a href="https://github.com/Anonym-Guy/simplediscordbot/tree/main/ban%20words">banned words</a><br>
+5.Customize your bot response name for chat system (change the array "name_to_react" on bottom of the file to what you want)
 
 <h1>Commands</h1>
 <b>!text</b> (random text from text.txt file) <br>
