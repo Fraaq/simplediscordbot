@@ -1,12 +1,13 @@
 from discord.ext import commands
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
-from forex_python.converter import CurrencyRates 
-import random,discord,os,wikipedia,qrcode,requests
+from forex_python.converter import CurrencyRates
+from datetime import datetime 
+import random,discord,os,wikipedia,qrcode,requests,time
 
 
 load_dotenv()
-TOKEN = os.getenv('TOKEN')  #Load discord token from env file
+TOKEN = os.getenv('TOKEN')                                      #Load discord token from env file
 
 help_command = commands.DefaultHelpCommand(                     # Change the no category to commands
     no_category = 'Commands'
@@ -212,5 +213,36 @@ async def chat(msg):
        if i in msg.content:                                     #If ban words is send
             await msg.delete()                                  #Delete the message if contains baned words 
             await msg.channel.send(message)                     #Send warn message
-            
+
+@bot.listen('on_message')
+async def chat(msg):
+    greetings = ["hi","hello","wassup","sup"]
+
+    name_to_react = ["bot","robot"]                  #If user write for example "hi bot" or "hi robot" than bot will reply 
+                                                     #But if user didn't write name_to_react bot will not reply
+    random_greeting = random.choice(greetings)
+
+    if any(x in msg.content for x in greetings) and any(x in msg.content for x in name_to_react):       #IF user write for example "hello bot"
+        random_greeting_upper = random_greeting[0].upper() + random_greeting[1:]
+        await msg.channel.send(f"{random_greeting_upper} {msg.author.name} :wave:")
+
+    if any(x in msg.content for x in name_to_react) and any(x in msg.content for x in ["how are you","how's it going","what's up","how are you doing","how was your day"]): #If user write for example "what's up bot"
+        await msg.channel.send(f"I am good, and you ?")
+        response = await bot.wait_for('message',timeout = 30,check=lambda m: m.author == msg.author)    #Wait for user message how he is going
+        
+        if response.content in ["bad","not good"] :                                                     #If he's not doing well
+            await msg.channel.send(f"Oh, I'm sorry about that :confused:")
+        elif response.content in ["good","well","very good","okay","really good"] :                     #If he's doing well
+            await msg.channel.send(f"I'm glad to hear that :relaxed:")
+    
+    if any(x in msg.content for x in name_to_react) and any(x in msg.content for x in ["how old are you","what is your age"]):      #If user ask how old are you bot
+        bot_created = [2022,5,7]                                                                                                    #When was bot created
+        date = datetime.utcnow()                                                                                                    #Current date
+        date_to_subtract = [date.year,date.month,date.day]
+        age = [date_to_subtract[0] - bot_created[0],date_to_subtract[1] - bot_created[1] ,date_to_subtract[2] - bot_created[2]]                 #Age of bot
+        
+        await msg.channel.send(f"I was created in 2022-05-08\nSo i'm technically {age[0]} years {age[1]} months {age[2]} days old :smile:")
+
+
+
 bot.run(TOKEN)
