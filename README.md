@@ -1,7 +1,7 @@
 # simplediscordbot
 Simple python discord bot. This bot can send random text from txt file or random image from directory and it can delete message if the message contains word that you banned. It can also send and article from wikipedia based on user input. Users can create their own qrcode. And simple chat system (bot can response if someone write his name).
 
-<h1>Featues</h1>
+<h1>Features</h1>
 1. Random text from file <br>
 2. Random images from folder <br>
 3. Banned words from txt file <br>
