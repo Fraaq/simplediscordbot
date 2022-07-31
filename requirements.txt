@@ -1,0 +1,6 @@
+discord
+python-dotenv
+wikipedia
+qrcode
+forex-python
+pillow
