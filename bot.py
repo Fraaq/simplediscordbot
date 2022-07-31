@@ -19,7 +19,7 @@ client = discord.Client()
 @bot.command(name='image', help='Send random image to chat')    #Command name and help for it 
 async def images(ctx):
     script_dir = os.path.abspath(os.path.dirname(__file__))     #Get script directory
-    filenames = os.listdir(script_dir + "\images")              #Get all files from images directory
+    filenames = os.listdir(script_dir + "/images")              #Get all files from images directory
     extensions = ['.png','.jpg','.gif']                         #Allowed file extensions
     images = []
 
@@ -27,21 +27,22 @@ async def images(ctx):
         if i.endswith(tuple(extensions)) and i not in images:   
             images.append(i)
   
-    random_img = script_dir + "\\images\\" + random.choice(images)     #Choose random image and add path to it     
+    random_img = script_dir + "/images/" + random.choice(images)     #Choose random image and add path to it     
     await ctx.send(file=discord.File(random_img))                      #Send random image
 
 @bot.command(name='text', help='Send random text')              #Command name and help for it 
 async def text(ctx):
     script_dir = os.path.abspath(os.path.dirname(__file__))     #Get script directory
-    text_file_path = script_dir + "\\text\\" + "text.txt"       #Get file path
-    file = open(text_file_path, 'r')                            
+    text_file_path = script_dir + "/text/" + "text.txt"       #Get file path
+    
+    with open(text_file_path) as file:
+        file = open(text_file_path, 'r')                            
 
-    for line in file.readlines():                               #Split words by comma
-        text = line.rstrip().split(',')
-   
-    file.close()             
-    random_text = random.choice(text)                           #Choose random text
-    await ctx.send(random_text)                                 #Send random text
+        for line in file.readlines():                               #Split words by comma
+            text = line.rstrip().split(',')
+                
+        random_text = random.choice(text)                           #Choose random text
+        await ctx.send(random_text)                                 #Send random text
 
 
 @bot.command(name='whatis', help='Send wikipedia article about topic you wrote')    #Command name and help for it 
@@ -63,17 +64,16 @@ async def whatis(ctx,*args):
             await ctx.send("The article isn't existing or you wrote it wrong") 
 
 @bot.command(name='qrcode', help="Make your own qrcode | !qrcode 'what you want in qrcode' ")    #Command name and help for it 
-async def qr(ctx,*args):
+async def qr(ctx,*,args: str = None):
     script_dir = os.path.abspath(os.path.dirname(__file__))        #Get script directory
     data = " " .join(args)                                         #Words separeted by space
-    img = qrcode.make(data)                                        #Make qr code
+    image = qrcode.make(data)                                        #Make qr code
     
-    filepath = script_dir + "\\qr.png"
-    img.save(filepath)                                             #Save qr code 
+    filepath = script_dir + "/qr.png"
+    image.save(filepath)                                             #Save qr code 
     
-    
-    await ctx.send(file=discord.File(filepath))                    #Send qr code
-    os.remove(script_dir + "\\qr.png")                             #Delete the qr code to save space on device
+    await ctx.send(file=discord.File(filepath))                   #Send qr code
+    os.remove(script_dir + "/qr.png")                             #Delete the qr code to save space on device
 
 @bot.command(name='news', help="Send top 3 news")                  #Command name and help for it 
 async def qr(ctx):
@@ -100,25 +100,25 @@ async def game(ctx,arg):
 
     if player_choice in choices :                                   #If player writes correctly choice
         if bot_choice == player_choice :
-            await ctx.send(f"Tie, you both selected {bot_choice}")
+            await ctx.send(f"Tie, you both choose {bot_choice}")
 
         elif bot_choice == "rock" and player_choice == "paper":
-            await ctx.send(f"You win, bot selected {bot_choice}\nCongratulations :tada:")
+            await ctx.send(f"You win, bot choose {bot_choice}\nCongratulations :tada:")
 
         elif bot_choice == "rock" and player_choice == "scissors":
-            await ctx.send(f"Bot win, bot selected {bot_choice}")
+            await ctx.send(f"Bot win, bot choose {bot_choice}")
 
         elif bot_choice == "paper" and player_choice == "rock":
-            await ctx.send(f"Bot win, bot selected {bot_choice}")
+            await ctx.send(f"Bot win, bot choose {bot_choice}")
 
         elif bot_choice == "paper" and player_choice == "scissors":
-            await ctx.send(f"You win, bot selected {bot_choice}\nCongratulations :tada:")
+            await ctx.send(f"You win, bot choose {bot_choice}\nCongratulations :tada:")
 
         elif bot_choice == "scissors" and player_choice == "rock":
-            await ctx.send(f"You win, bot selected {bot_choice}\nCongratulations :tada:")
+            await ctx.send(f"You win, bot choose {bot_choice}\nCongratulations :tada:")
 
         elif bot_choice == "scissors" and player_choice == "paper":
-            await ctx.send(f"Bot win, bot selected {bot_choice}")
+            await ctx.send(f"Bot win, bot choose {bot_choice}")
     
     elif player_choice not in choices:                                 #If player writes something else 
         await ctx.send(f"Write please !rpas (rock,paper,scissors)")
@@ -200,19 +200,19 @@ async def conventor(ctx):
 @bot.listen('on_message')
 async def chat(msg):
     script_dir = os.path.abspath(os.path.dirname(__file__))     #Get script directory
-    text_file_path = script_dir + "\\ban words\\" + "words.txt" #Get file path
-    file = open(text_file_path, 'r') 
-    message = msg.author.mention + " was warned"                #Warn message
+    text_file_path = script_dir + "/ban words/" + "words.txt" #Get file path
+    
+    with open(text_file_path) as file:
+        message = msg.author.mention + " was warned"                #Warn message
 
-    for line in file.readlines():                               #Split words by comma
-        words = line.rstrip().split(',')
-   
-    file.close()             
+        for line in file.readlines():                               #Split words by comma
+            words = line.rstrip().split(',')           
 
-    for i in words : 
-       if i in msg.content:                                     #If ban words is send
-            await msg.delete()                                  #Delete the message if contains baned words 
-            await msg.channel.send(message)                     #Send warn message
+        for i in words : 
+            if i in msg.content:                                     #If ban words is send
+                    await msg.channel.send(message)                     #Send warn message
+                    await msg.delete()                                  #Delete the message if contains baned words 
+
 
 @bot.listen('on_message')
 async def chat(msg):
@@ -241,6 +241,8 @@ async def chat(msg):
         date_to_subtract = [date.year,date.month,date.day]
         age = [date_to_subtract[0] - bot_created[0],date_to_subtract[1] - bot_created[1] ,date_to_subtract[2] - bot_created[2]]                 #Age of bot
         
+        if age[2] < 0 :
+            age[2] = 0
         await msg.channel.send(f"I was created in 2022-05-08\nSo i'm technically {age[0]} years {age[1]} months {age[2]} days old :smile:")
 
 
