@@ -16,7 +16,7 @@ Simple python discord bot. This bot can send random text from txt file or random
  
 <h1>How to use it </h1>
 1.<a href="https://www.geeksforgeeks.org/how-to-install-pip-on-windows/"> Install pip</a><br>
-2.<a href="https://www.geeksforgeeks.org/how-to-install-a-python-module/"> Install modules</a> (pip install discord,python-dotenv,wikipedia,qrcode,forex-python)<br>
+2.<a href="https://www.geeksforgeeks.org/how-to-install-a-python-module/"> Install modules</a> (pip install -r requirements.txt)<br>
 3. Create .env file in main directory and add " TOKEN='YOURSUPERSECRETTOKEN' " replace the YOURSUPERSECRETTOKEN with your <a href="https://www.writebots.com/discord-bot-token/" >bot token</a> <br>
 4. Customize your <a href="https://github.com/Anonym-Guy/simplediscordbot/blob/main/text/text.txt">own words</a>, <a href="https://github.com/Anonym-Guy/simplediscordbot/tree/main/images">images</a> and <a href="https://github.com/Anonym-Guy/simplediscordbot/tree/main/ban%20words">banned words</a><br>
 5.Customize your <a href="https://github.com/Anonym-Guy/simplediscordbot/blob/main/bot.py">bot response name</a> for chat system (change the array "name_to_react" on bottom of the file to what you want)
