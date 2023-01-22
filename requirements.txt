@@ -4,3 +4,4 @@ wikipedia
 qrcode
 forex-python
 pillow
+python-dateutil
