@@ -1,250 +1,337 @@
 from discord.ext import commands
+from discord.ext.commands import CommandNotFound
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
-from forex_python.converter import CurrencyRates
-from datetime import datetime 
-import random,discord,os,wikipedia,qrcode,requests,time
+from forex_python.converter import CurrencyRates,RatesNotAvailableError 
+from datetime import datetime
+from dateutil import relativedelta
+from requests import get as request
+from qrcode import make as qr_make
+import random,discord,os,wikipedia
 
-
+#Load discord token (API) from env file
 load_dotenv()
-TOKEN = os.getenv('TOKEN')                                      #Load discord token from env file
+DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')                                      
 
-help_command = commands.DefaultHelpCommand(                     # Change the no category to commands
+#Change the !help from no category to commands
+help_command = commands.DefaultHelpCommand(                     
     no_category = 'Commands'
 )
 
-bot = commands.Bot(command_prefix='!', help_command=help_command) 
-client = discord.Client()
+#Load intents
+intents = discord.Intents.default()                                  
+intents.message_content = True 
 
-@bot.command(name='image', help='Send random image to chat')    #Command name and help for it 
+#Define discord bot and discord client
+bot = commands.Bot(command_prefix='!', intents=intents, help_command=help_command)
+client = discord.Client(intents=intents)
+
+#Variables
+script_directory = os.path.abspath(os.path.dirname(__file__))                  #Get script directory
+
+
+#Command to send random image from images directory
+
+@bot.command(name='image', help='Send random image to chat')                 
 async def images(ctx):
-    script_dir = os.path.abspath(os.path.dirname(__file__))     #Get script directory
-    filenames = os.listdir(script_dir + "/images")              #Get all files from images directory
-    extensions = ['.png','.jpg','.gif']                         #Allowed file extensions
-    images = []
+    all_files = os.listdir(script_directory + "/images")                           #Get all files from images directory
+    allowed_extensions = ('.png','.jpg','.jpeg','.gif')                        
+    
+    images = [file for file in all_files if file.endswith(allowed_extensions)]     #All avaible images with supported extensions
+    random_image = f"{script_directory}/images/{random.choice(images)}"            #Choose random image and add path to it     
+    
+    await ctx.send(file=discord.File(random_image))                            
 
-    for i in filenames:                                         #Check if files have supported extensions
-        if i.endswith(tuple(extensions)) and i not in images:   
-            images.append(i)
-  
-    random_img = script_dir + "/images/" + random.choice(images)     #Choose random image and add path to it     
-    await ctx.send(file=discord.File(random_img))                      #Send random image
 
-@bot.command(name='text', help='Send random text')              #Command name and help for it 
+#Command to send random text from file text.txt in text directory
+
+@bot.command(name='text', help='Send random text')                     
 async def text(ctx):
-    script_dir = os.path.abspath(os.path.dirname(__file__))     #Get script directory
-    text_file_path = script_dir + "/text/" + "text.txt"       #Get file path
+    text_file_path = f"{script_directory}/text/text.txt"            #Get file path
     
-    with open(text_file_path) as file:
-        file = open(text_file_path, 'r')                            
-
-        for line in file.readlines():                               #Split words by comma
-            text = line.rstrip().split(',')
-                
-        random_text = random.choice(text)                           #Choose random text
-        await ctx.send(random_text)                                 #Send random text
+    with open(text_file_path) as file:                           
+        for line in file.readlines():                              
+            text = line.rstrip().split(',')                         #Split words by comma
+  
+    random_text = random.choice(text)                               #Choose random text
+    await ctx.send(random_text)                                 
 
 
-@bot.command(name='whatis', help='Send wikipedia article about topic you wrote')    #Command name and help for it 
-async def whatis(ctx,*args):
-    try :
-        data = " " .join(args)                                                      #Try if article exist                                                                        
-        article = wikipedia.summary(data, sentences = 2)                            #Words separeted by space 
-        await ctx.send(article)                                                     #Send wikipedia article                                                
-   
-    except:                                                                         #If article doesn't exist or if exist more articles than 1
-        data = " " .join(args)                                                      #Words separeted by space                                                                  
-        article = wikipedia.search(data, results = 5)                               #Search for articles
+#Command to send wikipedia article based on the user input
+
+@bot.command(name='whatis', help='Send wikipedia article about topic you write')     
+async def whatis(ctx, *args: str):
+    if len(args) == 0:
+        await ctx.send("Please enter a topic to search for")
+    
+    else: 
+        data = " " .join(args)
+
+        try :                                                                            #Try if article exist                                                                                                                                                            
+            article = wikipedia.summary(data, sentences = 2)                             
+            await ctx.send(article)                                                                                                     
+    
+        except (wikipedia.PageError, wikipedia.DisambiguationError):                     #If article doesn't exist or if exist more articles than 1                                                      #Words separeted by space                                                                  
+            articles = wikipedia.search(data, results = 5)                              
+            
+            if len(articles) > 0 :                                                       #If something found
+                articles = ", ".join(articles)
+                await ctx.send(f"{data} can be : {articles}")                             
+            
+            else :                                                                       #If doesn't find anything
+                await ctx.send("The article isn't exist or you wrote it wrong") 
+            
+
+#Command to make qrcode based on the user input
+
+@bot.command(name='qrcode', help="Make your own qrcode | !qrcode 'what you want in qrcode' ")   
+async def qr(ctx,*,data : str = None):
+    if data :
+        qr_code = qr_make(data)                                       #Make qrcode
         
-        if len(article) > 0 :                                                       #If something found
-            result = str(article)[1:-1]                                             #Convert to string
-            result = result.replace("'", "")                                        #Add , between results
-            await ctx.send(f"{data} can be : {result}")                             #Send results
-        else :                                                                      #If didn't found
-            await ctx.send("The article isn't existing or you wrote it wrong") 
-
-@bot.command(name='qrcode', help="Make your own qrcode | !qrcode 'what you want in qrcode' ")    #Command name and help for it 
-async def qr(ctx,*,args: str = None):
-    script_dir = os.path.abspath(os.path.dirname(__file__))        #Get script directory
-    data = " " .join(args)                                         #Words separeted by space
-    image = qrcode.make(data)                                        #Make qr code
+        qr_filepath = f"{script_directory}/qr.png"                    #Where to save qrcode
+        qr_code.save(qr_filepath)                                     #Save qrcode 
+        
+        await ctx.send(file=discord.File(qr_filepath))                
+        os.remove(qr_filepath)                                        #Delete the qrcode to save space on device
     
-    filepath = script_dir + "/qr.png"
-    image.save(filepath)                                             #Save qr code 
-    
-    await ctx.send(file=discord.File(filepath))                   #Send qr code
-    os.remove(script_dir + "/qr.png")                             #Delete the qr code to save space on device
+    elif not data :
+        await ctx.send('Please write !qrcode "what do you want in qrcode"')
 
-@bot.command(name='news', help="Send top 3 news")                  #Command name and help for it 
+
+#Command to send news from www.bbc.com
+
+@bot.command(name='news', help="Send top 3 news")                  
 async def qr(ctx):
-    url = 'https://www.bbc.com/news'                               #URL for news
-    response = requests.get(url)                                   
+    url = 'http://www.bbc.com'
+    
+    url_to_news = f'{url}/news/world/'                                
+    response = request(url_to_news)                                   
 
     soup = BeautifulSoup(response.text, 'html.parser')
-
+    get_promo_news = soup.select("[class~=gs-c-promo-heading]", href=True)           
     links = []
 
-    for a in soup.select("[class~=gs-c-promo-heading]",href=True):
-        links.append("https://www.bbc.com"+ a['href'])              #Add links to news article
+    #Add only 3 news to links list with full url
+    for counter, news in enumerate(get_promo_news):
+        news_url = f'{url}{news["href"]}'
+        
+        if news_url not in links and counter <= 3:
+            links.append(news_url)
+        
+        elif counter > 3 :
+            break
+        
+    links = "\n".join(links)                           
+    await ctx.send(f"{links}")                            
 
-    await ctx.send(f"{links[1]}\n{links[2]}\n{links[13]}\n")        #Send 3 news 
 
-@bot.command(name='rpas', help="Rock Paper and Scissors game | !rpas 'your choice'")      #Command name and help for it 
-async def game(ctx,arg):
-   
-    choices = ["rock", "paper", "scissors"]
+#Command to rock, paper and scissors game
 
-    bot_choice = random.choice(choices)                             
-
-    player_choice = arg                                               
-
-    if player_choice in choices :                                   #If player writes correctly choice
-        if bot_choice == player_choice :
-            await ctx.send(f"Tie, you both choose {bot_choice}")
-
-        elif bot_choice == "rock" and player_choice == "paper":
-            await ctx.send(f"You win, bot choose {bot_choice}\nCongratulations :tada:")
-
-        elif bot_choice == "rock" and player_choice == "scissors":
-            await ctx.send(f"Bot win, bot choose {bot_choice}")
-
-        elif bot_choice == "paper" and player_choice == "rock":
-            await ctx.send(f"Bot win, bot choose {bot_choice}")
-
-        elif bot_choice == "paper" and player_choice == "scissors":
-            await ctx.send(f"You win, bot choose {bot_choice}\nCongratulations :tada:")
-
-        elif bot_choice == "scissors" and player_choice == "rock":
-            await ctx.send(f"You win, bot choose {bot_choice}\nCongratulations :tada:")
-
-        elif bot_choice == "scissors" and player_choice == "paper":
-            await ctx.send(f"Bot win, bot choose {bot_choice}")
+@bot.command(name='rpas', help="Rock Paper and Scissors game | !rpas 'your choice'")     
+async def game(ctx, player_choice : str = None):
+    if not player_choice :
+        await ctx.send(f"Please write !rpas 'your choice'")
     
-    elif player_choice not in choices:                                 #If player writes something else 
-        await ctx.send(f"Write please !rpas (rock,paper,scissors)")
+    elif player_choice :
+        choices = ("rock", "paper", "scissors")
+        bot_choice = random.choice(choices)                                                                   
+          
+        if player_choice in choices :
+            
+            #If tie                                   
+            if bot_choice == player_choice :
+                await ctx.send(f"Tie, you both choose {bot_choice}")
 
-@bot.command(name='random', help="Send random number | !random from 'number' to 'number' ")    #Command name and help for it
-async def rnd(ctx,*arg):
-    try :                                                                   
-        if arg[0] == "from" and arg[2] == "to" :                            #IF user wrote it in correct format
-            num1 = int(arg[1])                                              #User number1 to int
-            num2 = int(arg[3])                                              #User number2 to int
-            random_num = random.randrange(num1,num2 + 1)                    #Random number (number2 + 1 is for the maximum number entered by the user to be sent as well)
-            await ctx.send(random_num)
+            #If player win
+            elif bot_choice == "rock" and player_choice == "paper" or\
+                 bot_choice == "scissors" and player_choice == "rock" or\
+                 bot_choice == "paper" and player_choice == "scissors":
+                
+                await ctx.send(f"You win, bot choose {bot_choice}\nCongratulations :tada:")
+            
+            #If bot win
+            elif bot_choice == "rock" and player_choice == "scissors" or\
+                 bot_choice == "paper" and player_choice == "rock" or\
+                 bot_choice == "scissors" and player_choice == "paper" :
+                
+                await ctx.send(f"Bot win, bot choose {bot_choice}")
+        
+        elif player_choice not in choices:                                 
+            await ctx.send(f"Write please !rpas (rock, paper, scissors)")
+
+
+#Command to send random number in user defined range
+
+@bot.command(name='random', help="Send random number | !random from 'number' to 'number' ")   
+async def rnd(ctx, *arg):
+    try :
+        #If user write command in correct format                                                                   
+        if arg and arg[0] == "from" and arg[2] == "to" :                     
+            #User numbers to integers
+            start_number, end_number = int(arg[1]), int(arg[3]) 
+                         
+            random_number = random.randrange(start_number, end_number + 1)        
+            
+            await ctx.send(f"Random number is : {random_number}")   
+        
         else:
             await ctx.send("Write please : !random from 'your number' to 'your number'")
-    except:                                                                             
-        await ctx.send("Write please : !random from 'your number' to 'your number'")
+    
+    except ValueError:                                                                             
+        await ctx.send("Write numbers please")
 
-@bot.command(name='gtn', help = 'Guess the number game')        #Command name and help for it
+
+#Command to guess the number game
+
+@bot.command(name='gtn', help = 'Guess the number game')        
 async def guess_the_number(ctx):
     await ctx.send("Guess the number between 1 - 100")
-    random_number = random.randrange(1,101)                     #Random number between 1 - 100
+
+    random_number = random.randrange(1,101)                     
     win = False                                                 
     attempts = 1                                        
 
     while win == False :                                        
-        try :                                                                                           
-            msg = await bot.wait_for('message',timeout = 15,check=lambda m: m.author == ctx.author)      #Get input of user time to write is 15s
-            user_guess = int(msg.content)                                                                #User input to int
-            if user_guess == random_number :                                                             #If user guessed the number
-                await ctx.send(f"Congratulations you guessed the number on {attempts} try :tada:")
-                win = True
-                break
-            elif user_guess > random_number :                                                            #If user number is lower than the number
-                await ctx.send("The number is lower")
-                attempts = attempts + 1
-                continue
-
-            elif user_guess < random_number :                                                            #If user number is higher than the number
-                await ctx.send("The number is higher")
-                attempts = attempts + 1
-                continue
+        try : 
+            #Wait for user number guess message                                                                                           
+            message = await bot.wait_for('message',timeout = 15, check=lambda m: m.author == ctx.author and m.channel.id == ctx.channel.id)      
             
-        except ValueError :                                     #If user input something else than number
-            await ctx.send("Write please number")
-            continue
+            #User input to int
+            user_guess = int(message.content)      
+            
+            if user_guess == random_number :                                                                 
+                win = True
+                await ctx.send(f"Congratulations, you guessed the number on {attempts} try :tada:")
+                break
 
-        except :                                                #If time is up
+            elif user_guess > random_number :                                                    
+                attempts += 1
+                await ctx.send("The number is lower")
+                continue
+
+            elif user_guess < random_number :                                                    
+                attempts += 1
+                await ctx.send("The number is higher")
+                continue
+        
+        #If user input something else than number    
+        except ValueError :                                                      
+            await ctx.send("Write number please")
+            continue
+        
+        #If time is up    
+        except TimeoutError:                                                      
             await ctx.send("Time is up !")
             break
 
 
-@bot.command(name='convert', help='Convert currency to another currency')
-async def conventor(ctx):
-    await ctx.send("Enter the amount to convert :")
-    
-    c = CurrencyRates()
-   
+#Command to convert currency to another currency based on the user input
+
+@bot.command(name='convert', help='Convert currency to another currency | !convert from currency to currency amount')
+async def convertor(ctx, from_currency : str = None, to_currency : str = None, amount : str = None):
     try :
-        amount = await bot.wait_for('message',timeout = 30,check=lambda m: m.author == ctx.author)      #Get input of user time to write is 30s
-        await ctx.send("Enter the currency from which you want to convert :")
-        from_currency = await bot.wait_for('message',timeout = 30,check=lambda m: m.author == ctx.author)      #Get input of user time to write is 30s
-    
-        await ctx.send("Enter the currency that you want converted :")
-        to_currency = await bot.wait_for('message',timeout = 30,check=lambda m: m.author == ctx.author)      #Get input of user time to write is 30s
+        
+        if not from_currency or not to_currency or not amount : 
+            await ctx.send('Please write !convert "from currency" "to currency" "amount"')
+        
+        elif from_currency and to_currency and amount :
+            
+            #Change user input to upper case    
+            from_currency, to_currency = from_currency.upper(), to_currency.upper()             
 
+            amount = float(amount)
 
-        convert = c.convert(from_currency.content.upper(), to_currency.content.upper(), float(amount.content))     #Convert user input
-    
-        result = round(convert,2)                                                                                 #Specified number of decimals
+            currenry_rates = CurrencyRates()
+            
+            #Convert user input
+            convert_result = currenry_rates.convert(from_currency, to_currency, amount)         
+            
+            #Specified number of decimals
+            result = round(convert_result, 2)                                                   
 
-        await ctx.send(f"{result} {to_currency.content.upper()}")                                                  
+            await ctx.send(f"{amount} {from_currency} = {result} {to_currency}")                                                  
         
     except ValueError :
-        await ctx.send("You entered something wrong")
+        await ctx.send("You entered wrong amount to convert")
         
-    except :
-        pass
+    except RatesNotAvailableError:
+        await ctx.send("You entered bad currency, or currency is not supported")
+
+    except Exception :
+        await ctx.send('Sorry, something went wrong')
+
+
+#Listen for banned messages from the file words.txt in ban words directory
 
 @bot.listen('on_message')
 async def chat(msg):
-    script_dir = os.path.abspath(os.path.dirname(__file__))     #Get script directory
-    text_file_path = script_dir + "/ban words/" + "words.txt" #Get file path
+    message_content = msg.content.lower()
     
-    with open(text_file_path) as file:
-        message = msg.author.mention + " was warned"                #Warn message
+    text_file_path = f"{script_directory}/ban words/words.txt"                     #Get file path
+    warn_message = msg.author.mention + " was warned"
+    
+    with open(text_file_path) as file:                           
+        banned_words = [line for line in file.readline().split(',')]               #Get banned words from words.txt
+    
+    user_bad_words =[word for word in banned_words if word in message_content]
 
-        for line in file.readlines():                               #Split words by comma
-            words = line.rstrip().split(',')           
+    if any(user_bad_words):                                                        #If banned words is send
+        await msg.channel.send(warn_message) and await msg.delete()                #Send warn message and delete the message that contains banned words
 
-        for i in words : 
-            if i in msg.content:                                     #If ban words is send
-                    await msg.channel.send(message)                     #Send warn message
-                    await msg.delete()                                  #Delete the message if contains baned words 
 
+#Listen for interactions with bot and response
 
 @bot.listen('on_message')
 async def chat(msg):
-    greetings = ["hi","hello","wassup","sup"]
-
-    name_to_react = ["bot","robot"]                  #If user write for example "hi bot" or "hi robot" than bot will reply 
-                                                     #But if user didn't write name_to_react bot will not reply
+    message_content = msg.content.lower()
+    
+    #All possible chat interactions variables 
+    greetings = ("hi","hello","wassup","sup")
+    name_to_react = ("bot","robot")                                                                 
+    how_are_you_react = ("how are you","how's it going","what's up","how are you doing","how was your day")
+    how_old_are_you_react = ("how old are you","what is your age")
+    user_greeting_msg = [x in message_content for x in greetings]
+    user_name_to_react_msg = [x in message_content for x in name_to_react]
+    user_how_are_you_react_msg = [x in message_content for x in how_are_you_react]
+    user_how_old_msg = [x in message_content for x in how_old_are_you_react]
+    user_bad_mood_msg = ("bad","not good")
+    user_good_mood_msg = ("good","well","very good","okay","really good")
     random_greeting = random.choice(greetings)
+    random_greeting = random_greeting[0].upper() + random_greeting[1:]
 
-    if any(x in msg.content for x in greetings) and any(x in msg.content for x in name_to_react):       #IF user write for example "hello bot"
-        random_greeting_upper = random_greeting[0].upper() + random_greeting[1:]
-        await msg.channel.send(f"{random_greeting_upper} {msg.author.name} :wave:")
+    #If the user greets the bot
+    if any(user_greeting_msg) and any(user_name_to_react_msg):                   
+        await msg.channel.send(f"{random_greeting} {msg.author.name} :wave:")
 
-    if any(x in msg.content for x in name_to_react) and any(x in msg.content for x in ["how are you","how's it going","what's up","how are you doing","how was your day"]): #If user write for example "what's up bot"
+    #If the user asks how the bot is doing
+    if any(name_to_react) and any(user_how_are_you_react_msg):                    
         await msg.channel.send(f"I am good, and you ?")
-        response = await bot.wait_for('message',timeout = 30,check=lambda m: m.author == msg.author)    #Wait for user message how he is going
         
-        if response.content in ["bad","not good"] :                                                     #If he's not doing well
-            await msg.channel.send(f"Oh, I'm sorry about that :confused:")
-        elif response.content in ["good","well","very good","okay","really good"] :                     #If he's doing well
+        #Wait for user message how he is doing
+        response = await bot.wait_for('message',timeout = 30,check=lambda m: m.author == msg.author)    
+        
+        if response.content in user_bad_mood_msg :                                                 
+            await msg.channel.send(f"Oh, I'm sorry about that :confused:\nIf you want, you can play games with me type !help for more information :blush:")
+
+        elif response.content in user_good_mood_msg :                     
             await msg.channel.send(f"I'm glad to hear that :relaxed:")
     
-    if any(x in msg.content for x in name_to_react) and any(x in msg.content for x in ["how old are you","what is your age"]):      #If user ask how old are you bot
-        bot_created = [2022,5,7]                                                                                                    #When was bot created
-        date = datetime.utcnow()                                                                                                    #Current date
-        date_to_subtract = [date.year,date.month,date.day]
-        age = [date_to_subtract[0] - bot_created[0],date_to_subtract[1] - bot_created[1] ,date_to_subtract[2] - bot_created[2]]                 #Age of bot
+    #If user asks how old is bot
+    if any(user_name_to_react_msg) and any(user_how_old_msg):      
+        bot_created = datetime(2022,8,5)                                                                                                   
+        current_date = datetime.utcnow()
+        bot_created, current_date = bot_created.date(), current_date.date()     
+        age = relativedelta.relativedelta(current_date, bot_created)                                                                                                  
         
-        if age[2] < 0 :
-            age[2] = 0
-        await msg.channel.send(f"I was created in 2022-05-08\nSo i'm technically {age[0]} years {age[1]} months {age[2]} days old :smile:")
+        await msg.channel.send(f"I was created in 2022-05-08\nSo i'm technically {age.years} years {age.months} months {age.days} days old :smile:")
 
+#If command not found 
 
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, CommandNotFound):
+        await ctx.send("Command not found !\nIf you want to check all available commands write !help.")
+    
 
-bot.run(TOKEN)
+bot.run(DISCORD_TOKEN)
