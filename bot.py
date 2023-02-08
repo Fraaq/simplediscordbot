@@ -21,7 +21,7 @@ help_command = commands.DefaultHelpCommand(
     no_category='Commands'
 )
 
-# Load intentsW
+# Load intents
 intents = discord.Intents.default()
 intents.message_content = True
 
