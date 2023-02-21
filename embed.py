@@ -1,7 +1,8 @@
 import discord
+from typing import Union
 
 
-def send_embed(ctx, title: str, description: str = None, color: int | discord.Colour | None = 0x0391fb):
+def send_embed(ctx, title: str, description: str = None, color: Union[int, discord.Colour, None] = 0x0391fb):
     """
     Send simple discord embed
     :param ctx: Discord ctx
