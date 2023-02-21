@@ -5,6 +5,7 @@ This bot can send random text from txt file or random image from directory and i
 * [Features](#features)
 * [How to use it](#how-to-use-it)
 * [Commands](#commands)
+* [Screenshots](#screenshots)
 
 ## Features
 1. Random text from file
