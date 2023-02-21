@@ -24,7 +24,7 @@ This bot can send random text from txt file or random image from directory and i
 1. Install [python](https://www.digitalocean.com/community/tutorials/install-python-windows-10) and [pip](https://www.liquidweb.com/kb/install-pip-windows/)   
 2. Download and unzip [repository](https://github.com/Anonym-Guy/simplediscordbot/archive/refs/heads/main.zip)
 3. Open unziped folder
-4. [Install](https://www.geeksforgeeks.org/how-to-install-a-python-module/) modules (open cmd or powershell in unziped folder)  
+4. Install modules (open cmd or powershell in unziped folder)  
 ```pip install -r requirements.txt``` 
 5. Get a Discord [Bot Token](https://www.writebots.com/discord-bot-token/)  
 -When adding a discord bot to your server give him permissions : Read Messages/View Channels, Send Messages, Manage Messages, Embed Links, Attach Files, Read Message History, Use External Emojis, Use External Stickers, Add Reactions          
