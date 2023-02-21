@@ -28,7 +28,8 @@ This bot can send random text from txt file or random image from directory and i
 ```pip install -r requirements.txt``` 
 5. Get a Discord [Bot Token](https://www.writebots.com/discord-bot-token/)  
 -When adding a discord bot to your server give him permissions : Read Messages/View Channels, Send Messages, Manage Messages, Embed Links, Attach Files, Read Message History          
-6. Enable [message content intent](https://autocode.com/discord/threads/what-are-discord-privileged-intents-and-how-do-i-enable-them-tutorial-0c3f9977/) for bot 
+6. [Enable intent](https://autocode.com/discord/threads/what-are-discord-privileged-intents-and-how-do-i-enable-them-tutorial-0c3f9977/) for bot  
+-Enable only message content intent
 7. Create file named .env in main directory and add ```DISCORD_TOKEN='YOURSUPERSECRETTOKEN'``` replace the YOURSUPERSECRETTOKEN with your bot token   
 8. Customize [words](./text/text.txt), [images](./images) and [banned words](./ban%20words/words.txt)  
 9. Customize your [bot response name](./bot.py) for chat system (change the list "name_to_react" on bottom of the file to what you want)
