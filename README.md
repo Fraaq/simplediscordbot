@@ -21,7 +21,8 @@ This bot can send random text from txt file or random image from directory and i
 11. Simple chat system
  
 ## How to use it 
-1. Install [python](https://www.digitalocean.com/community/tutorials/install-python-windows-10) and [pip](https://www.geeksforgeeks.org/how-to-install-pip-on-windows/)   
+1. Install [python](https://www.digitalocean.com/community/tutorials/install-python-windows-10) and [pip](https://www.liquidweb.com/kb/install-pip-windows/)   
+3. Download and unzip [repository](https://github.com/Anonym-Guy/simplediscordbot/archive/refs/heads/main.zip)
 2. [Install](https://www.geeksforgeeks.org/how-to-install-a-python-module/) modules  
 ```pip install -r requirements.txt``` 
 3. Get a Discord [Bot Token](https://www.writebots.com/discord-bot-token/)
