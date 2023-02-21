@@ -22,14 +22,15 @@ This bot can send random text from txt file or random image from directory and i
  
 ## How to use it 
 1. Install [python](https://www.digitalocean.com/community/tutorials/install-python-windows-10) and [pip](https://www.liquidweb.com/kb/install-pip-windows/)   
-3. Download and unzip [repository](https://github.com/Anonym-Guy/simplediscordbot/archive/refs/heads/main.zip)
-2. [Install](https://www.geeksforgeeks.org/how-to-install-a-python-module/) modules  
+2. Download and unzip [repository](https://github.com/Anonym-Guy/simplediscordbot/archive/refs/heads/main.zip)
+3. Open unziped folder
+4. [Install](https://www.geeksforgeeks.org/how-to-install-a-python-module/) modules  
 ```pip install -r requirements.txt``` 
-3. Get a Discord [Bot Token](https://www.writebots.com/discord-bot-token/)
-4. Enable [message content intent](https://autocode.com/discord/threads/what-are-discord-privileged-intents-and-how-do-i-enable-them-tutorial-0c3f9977/) for bot 
-5. Create file named .env in main directory and add ```DISCORD_TOKEN='YOURSUPERSECRETTOKEN'``` replace the YOURSUPERSECRETTOKEN with your bot token   
-6. Customize [words](./text/text.txt), [images](./images) and [banned words](./ban%20words/words.txt)  
-7. Customize your [bot response name](./bot.py) for chat system (change the list "name_to_react" on bottom of the file to what you want)
+5. Get a Discord [Bot Token](https://www.writebots.com/discord-bot-token/)
+6. Enable [message content intent](https://autocode.com/discord/threads/what-are-discord-privileged-intents-and-how-do-i-enable-them-tutorial-0c3f9977/) for bot 
+7. Create file named .env in main directory and add ```DISCORD_TOKEN='YOURSUPERSECRETTOKEN'``` replace the YOURSUPERSECRETTOKEN with your bot token   
+8. Customize [words](./text/text.txt), [images](./images) and [banned words](./ban%20words/words.txt)  
+9. Customize your [bot response name](./bot.py) for chat system (change the list "name_to_react" on bottom of the file to what you want)
 
 ## Commands
 **!text** (random text from text.txt file)   
