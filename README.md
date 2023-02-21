@@ -32,7 +32,8 @@ This bot can send random text from txt file or random image from directory and i
 -Enable only message content intent
 7. Create file named .env in main unziped folder and add ```DISCORD_TOKEN='YOURSUPERSECRETTOKEN'``` replace the YOURSUPERSECRETTOKEN with your bot token (keep the quotation marks)  
 8. Customize [words](./text/text.txt), [images](./images) and [banned words](./ban%20words/words.txt)  
-9. Customize your [bot response name](./bot.py) for chat system (change the list "name_to_react" on bottom of the file to what you want)
+9. Customize your [bot response name](./bot.py) for chat system in bot.py   
+```name_to_react = ("yourname","yoursecondname")```
 
 ## Commands
 **!text** (random text from text.txt file)   
