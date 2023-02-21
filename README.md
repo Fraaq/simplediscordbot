@@ -39,3 +39,10 @@ This bot can send random text from txt file or random image from directory and i
 **!random from "your number" to "your number"** (Random number)   
 **!gtn** (Guess the number game)  
 **!convert** (Convert currency to another currency)  
+
+## Screenshots
+<p float="left">
+  <img src="/screenshots/screen1.png?raw=true" alt="Screenshot of rock, paper and scissor" width="500" height="350" />
+  <img src="/screenshots/screen2.png?raw=true" alt="Wikipedia search command" width="500" height="350" /> 
+  <img src="/screenshots/screen3.png?raw=true" alt="Qrcode creator" width="500" height="350" />                                                                   <img src="/screenshots/screen4.png?raw=true" alt="Random number generator" width="500" height="350" />                      
+</p>
