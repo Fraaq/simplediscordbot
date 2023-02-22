@@ -9,17 +9,17 @@ This bot can send random text from txt file or random image from directory and i
 * [Screenshots](#screenshots)
 
 ## Features
-1. Random text from file
-2. Random images from folder
-3. Banned words from txt file
-4. Send wikipedia article based on user input
-5. Create qr code based on user input
-6. Send 3 news
-7. Rock Paper and Scissors game
-8. Random number in range, based on user input
-9. Guess the number game
-10. Convert currency to another currency
-11. Simple chat system
+* Random text from file
+* Random images from folder
+* Banned words from txt file
+* Send wikipedia article based on user input
+* Create qr code based on user input
+* Send 3 news
+* Rock Paper and Scissors game
+* Random number in range, based on user input
+* Guess the number game
+* Convert currency to another currency
+* Simple chat system
  
 ## How to use it 
 1. Install [python](https://www.digitalocean.com/community/tutorials/install-python-windows-10) and [pip](https://www.liquidweb.com/kb/install-pip-windows/)   
