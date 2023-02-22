@@ -23,7 +23,7 @@ This bot can send random text from txt file or random image from directory and i
  
 ## How to use it 
 1. Install [python](https://www.digitalocean.com/community/tutorials/install-python-windows-10) and [pip](https://www.liquidweb.com/kb/install-pip-windows/)   
-2. Download and unzip [repository](https://github.com/Anonym-Guy/simplediscordbot/archive/refs/heads/main.zip)
+2. Download and unzip [this repository](https://github.com/Anonym-Guy/simplediscordbot/archive/refs/heads/main.zip)
 3. Open unziped folder
 4. Install modules (open cmd or powershell in unziped folder)  
 ```pip install -r requirements.txt``` 
