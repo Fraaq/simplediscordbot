@@ -1,4 +1,5 @@
 # Simple Discord Bot in Python
+[![License: Unlicense](https://img.shields.io/github/license/Anonym-Guy/simplediscordbot)](https://opensource.org/license/unlicense/) ![Python](https://img.shields.io/badge/python-3.11-yellow.svg) ![Watchers](https://img.shields.io/github/watchers/Anonym-Guy/simplediscordbot.svg) ![RepoSize](https://img.shields.io/github/repo-size/Anonym-Guy/simplediscordbot?color=purple)  
 This bot can send random text from txt file or random image from directory and it can delete message if the message contains word that you banned. It can also send and article from wikipedia based on user input. Users can create their own qrcode. And simple chat system (bot can response if someone write his name).
 
 ## Table of contents
