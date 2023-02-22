@@ -5,6 +5,7 @@ This bot can send random text from txt file or random image from directory and i
 ## Table of contents
 * [Features](#features)
 * [How to use it](#how-to-use-it)
+* [How to customize bot](#how-to-customize-bot)
 * [Commands](#commands)
 * [Screenshots](#screenshots)
 
@@ -32,10 +33,59 @@ This bot can send random text from txt file or random image from directory and i
 6. [Enable intent](https://autocode.com/discord/threads/what-are-discord-privileged-intents-and-how-do-i-enable-them-tutorial-0c3f9977/) for bot  
 -Enable only message content intent
 7. Create file named .env in main unziped folder and open it with notepad. Add ```DISCORD_TOKEN='YOURSUPERSECRETTOKEN'``` replace the YOURSUPERSECRETTOKEN with your bot token (keep the quotation marks)  
-8. Customize [words](./text/text.txt), [images](./images) and [banned words](./ban%20words/words.txt)  
-9. Customize your [bot response name](./bot.py) for chat system in bot.py   
-```name_to_react = ("yourname","yoursecondname")```
+8. Run bot.py with python
 
+## How to customize bot
+* ### Change random text (!text)  
+  * Edit the **text.txt** file in **text** directory  
+
+* ### Change random images (!image) 
+  * Add or remove images inside **images** directory  
+  * Supported file extensions are : **png, jpg, jpeg, gif** 
+
+* ### Customize banned words in chat  
+  * Edit **words.txt** file in **ban words** directory
+
+* ### Customize chat system 
+1. Find function ```async def chat_with_bot(msg)``` in bot.py
+2. Inside function you can find variables like ```greetings``` or ```name_to_react``` and more...    
+   ```python
+   greetings = ("hi", "hello", "was-sup", "sup")
+   name_to_react = ("bot", "robot")
+   ```
+   
+3. Change it to whatever you want  
+   ```python
+   greetings = ("aloha", "Bonjour", "Hola")
+   name_to_react = ("superbot", "bestrobot")
+   ```
+   
+* ### Change name or help of command  
+1. Find command in bot.py that you want to change (For example I choose !image)  
+   ```python
+   @bot.command(name='image', help='Send random image to chat')
+   ```
+
+2. Edit the name of command and help of command  
+    ```python
+    @bot.command(name='your_command_name', help='your_help_message')
+    ```
+* ### Change messages (embeds) output of commands  
+1. Find command that you want to change (For example I choose !text)  
+2. After that find function that handle the embed in    
+   ```python
+   await emb.send_embed(ctx, title=random_text)
+   ```
+   
+3. Finally you can edit the message (Supported arguments for the function are **title, description, color**)
+   ```python
+   await emb.send_embed(ctx, title=f"Your random text is {random_text}", description="This is a description", color=discord.Color.orange())
+   ```
+   * Remember that you need to always include argument **ctx**  
+   * If you don't write argument description, the description would be empty  
+   * Or if you don't write argument color default color will be blue 
+   * Argument color can be hex color code like **0xe0ab76** (0xhex_color_code) or discord Class Color like **discord.Color.orange()** (discord.Color.yourcolor()) or color can be None
+   
 ## Commands
 **!text** (random text from text.txt file)   
 **!image** (random image from images folder)   
