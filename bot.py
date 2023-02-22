@@ -302,23 +302,27 @@ async def convert_currency(ctx, from_currency: str = None, to_currency: str = No
         await emb.send_embed(ctx, title='You entered bad currency, or currency is not supported', color=0xFF0000)
 
 
-# Listen for banned messages from the file words.txt in ban words directory
+# Listen for banned words from the file words.txt in ban words directory
 
 @bot.listen('on_message')
 async def check_for_banned_words(msg):
     message_content = msg.content.casefold()
 
-    text_file_path = f"{script_directory}/ban words/words.txt"
+    words_file_path = f"{script_directory}/ban words/words.txt"
     warn_message = f"{msg.author.mention} was warned"
 
     # Get banned words from words.txt
-    with open(text_file_path) as file:
-        banned_words = [line for line in file.readline().split(',')]
+    with open(words_file_path) as file:
+        banned_words_lines = [line for line in file.read().splitlines()]
 
-    user_bad_words = [word for word in banned_words if word in message_content]
+    # Split words with , and add them in one list
+    banned_words = [line.split(",") for line in banned_words_lines]
+    banned_words = [word for lines in banned_words for word in lines]
+
+    user_banned_message = [word for word in banned_words if word in message_content]
 
     # If user sent bad word
-    if any(user_bad_words):
+    if any(user_banned_message):
         await msg.channel.send(warn_message) and await msg.delete()
 
 
@@ -359,8 +363,7 @@ async def chat_with_bot(msg):
         if response.content in user_bad_mood_msg:
             await msg.channel.send(
                 f"Oh, I'm sorry about that :confused:\n"
-                f"If you want, you can play games with me type !help for more information :blush:"
-            )
+                f"If you want, you can play games with me type !help for more information :blush:")
 
         elif response.content in user_good_mood_msg:
             await msg.channel.send(f"I'm glad to hear that :relaxed:")
@@ -374,8 +377,7 @@ async def chat_with_bot(msg):
 
         await msg.channel.send(
             f"I was created in {bot_created}\nSo i'm technically {age.years} years {age.months} months "
-            f"{age.days} days old :smile:"
-        )
+            f"{age.days} days old :smile:")
 
 
 # If command not found
@@ -386,8 +388,7 @@ async def on_command_error(ctx, error):
         await emb.send_embed(ctx,
                              title="Command not found !",
                              description="If you want to check all available commands write !help.",
-                             color=0xFF0000
-                             )
+                             color=0xFF0000)
 
 
 # Run bot
