@@ -60,6 +60,17 @@ This bot can send random text from txt file or random image from directory and i
    name_to_react = ("superbot", "bestrobot")
    ```
    
+* ### Change bot command prefix (default is !)  
+1. Find this line in bot.py
+
+   ```python
+   bot = commands.Bot(command_prefix='!', intents=intents, help_command=help_command)
+   ```
+2. Edit the command_prefix  
+   ```python
+   bot = commands.Bot(command_prefix='your_command_prefix', intents=intents, help_command=help_command)
+   ```
+
 * ### Change name or help of command  
 1. Find command in bot.py that you want to change (For example I choose !image)  
    ```python
