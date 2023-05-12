@@ -118,7 +118,7 @@ async def make_qrcode(ctx, *, data: str = None):
 
 @bot.command(name='news', help="Send top 3 news")
 async def send_three_news(ctx):
-    url = 'http://www.bbc.com'
+    url = 'https://www.bbc.com'
 
     url_to_news = f'{url}/news/world/'
     response = request(url_to_news)
